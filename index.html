@@ -71,7 +71,7 @@ footer{margin:30px 0 10px;color:var(--mute);font-size:13px}footer b{color:var(--
 
 <script>
 /* ============ DONNÉES & RÉGLAGES (modifiables aussi depuis l'espace admin) ============ */
-var KEY="yabiso_v1";
+var KEY="yabiso_v2";
 var CATS=["Plats du jour","Poulet","Poisson","Viande","Accompagnements","Boissons"];
 var STAT=["Nouvelle commande","En attente de confirmation","Confirmée","En préparation","En livraison","Livrée","Annulée"];
 var DEF={
@@ -79,14 +79,15 @@ var DEF={
   promoOn:true,promoStart:"2026-10-09",promoEnd:"2026-10-23",
   zones:"Poto-Poto, Moungali, Ouenzé, Plateau",promoZones:"Poto-Poto, Moungali",pin:"1234"},
  products:[
-  {id:1,name:"Poulet à la moambe",desc:"Poulet mijoté en sauce de noix de palme.",partner:"Maman Odile (démo)",cat:"Poulet",base:3000,avail:"dispo",emo:"🍗",pop:1,demo:1},
-  {id:2,name:"Poulet braisé",desc:"Demi-poulet grillé, piment à part.",partner:"Chez Tonton Fred (démo)",cat:"Poulet",base:3500,avail:"dispo",emo:"🍖",pop:1,demo:1},
-  {id:3,name:"Liboké de poisson",desc:"Poisson cuit en feuilles de bananier.",partner:"Maman Odile (démo)",cat:"Poisson",base:2500,avail:"dispo",emo:"🐟",pop:1,demo:1},
-  {id:4,name:"Saka-saka et poisson fumé",desc:"Feuilles de manioc pilées, poisson fumé.",partner:"Maman Odile (démo)",cat:"Plats du jour",base:2000,avail:"dispo",emo:"🥬",pop:1,demo:1},
-  {id:5,name:"Brochettes de bœuf (5)",desc:"Brochettes grillées épicées.",partner:"Chez Tonton Fred (démo)",cat:"Viande",base:1500,avail:"dispo",emo:"🍢",demo:1},
-  {id:6,name:"Chikwangue",desc:"Bâton de manioc fermenté.",partner:"Chez Tonton Fred (démo)",cat:"Accompagnements",base:500,avail:"dispo",emo:"🥖",demo:1},
-  {id:7,name:"Bananes plantains frites",desc:"Portion dorée et croustillante.",partner:"Maman Odile (démo)",cat:"Accompagnements",base:700,avail:"rupture",emo:"🍌",demo:1},
-  {id:8,name:"Jus de gingembre 50cl",desc:"Maison, bien frais.",partner:"Chez Tonton Fred (démo)",cat:"Boissons",base:500,avail:"dispo",emo:"🧃",demo:1}
+  {id:1,name:"Cuisse de poulet + bananes + riz",desc:"Cuisse de poulet, bananes et riz.",partner:"Partenaire à confirmer",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1},
+  {id:2,name:"Cuisse de poulet + bananes",desc:"Cuisse de poulet avec bananes.",partner:"Partenaire à confirmer",cat:"Poulet",base:1500,avail:"dispo",emo:"🍌"},
+  {id:3,name:"Cuisse de poulet + riz",desc:"Cuisse de poulet avec riz.",partner:"Partenaire à confirmer",cat:"Poulet",base:1500,avail:"dispo",emo:"🍚"},
+  {id:4,name:"Cuisse de poulet + manioc",desc:"Cuisse de poulet avec manioc.",partner:"Partenaire à confirmer",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1},
+  {id:5,name:"Spaghettis + viande ou poulet",desc:"Précisez viande ou poulet dans les instructions.",partner:"Partenaire à confirmer",cat:"Plats du jour",base:1500,avail:"dispo",emo:"🍝"},
+  {id:6,name:"Poulet mayo",desc:"Poulet sauce mayonnaise.",partner:"Partenaire à confirmer",cat:"Poulet",base:2500,avail:"dispo",emo:"🍗",pop:1},
+  {id:7,name:"Riz composé",desc:"Riz garni et assaisonné.",partner:"Partenaire à confirmer",cat:"Plats du jour",base:2000,avail:"dispo",emo:"🍛",pop:1},
+  {id:8,name:"Salade composée",desc:"Salade fraîche et variée.",partner:"Partenaire à confirmer",cat:"Plats du jour",base:1500,avail:"dispo",emo:"🥗"},
+  {id:9,name:"Yaourt",desc:"Yaourt frais.",partner:"Partenaire à confirmer",cat:"Boissons",base:500,avail:"dispo",emo:"🥛"}
  ],orders:[],expenses:[],nid:100
 };
 var S=load()||JSON.parse(JSON.stringify(DEF));
