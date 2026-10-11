@@ -215,7 +215,7 @@ function saveR(){var s=S.settings;["shop","wa","open","close","cutoff","zones","
  ["margin","transport"].forEach(function(k){var v=parseInt($("r_"+k).value,10);if(v>=0)s[k]=v});save();toast("Réglages enregistrés")}
 function tSauv(){$("tb").innerHTML='<div class="adm"><b>Sauvegarde</b><p class="note">Copiez ce texte et collez-le dans l\'app Notes de votre iPhone. Pour restaurer, collez-le dans la case puis appuyez sur Restaurer.</p><textarea id="bk" rows="7">'+esc(JSON.stringify(S))+'</textarea><button class="btn b3 bw sm" style="margin-top:8px" onclick="restore()">Restaurer depuis ce texte</button><button class="btn b4 bw sm" style="margin-top:8px" onclick="if(confirm(\'Tout effacer et revenir aux données du code ?\')){localStorage.removeItem(KEY);location.reload()}">Réinitialiser</button></div>'}
 function restore(){try{var d=JSON.parse($("bk").value);if(!d.settings||!d.products)throw 0;S=d;save();toast("Restauré");renderAdmin()}catch(e){toast("Texte de sauvegarde invalide")}}
-route();
+github.com/chadrackbayidikila/yabisofood/edit/main/index.htmlroute();
 </script>
 </body>
 </html>
