@@ -32,8 +32,8 @@ h2{font-size:20px;margin:22px 0 10px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.ph{height:104px;display:grid;place-items:center;font-size:52px;background:var(--line);position:relative;overflow:hidden}
-.ph img{width:100%;height:100%;object-fit:cover}
+.ph{height:150px;display:grid;place-items:center;font-size:52px;background:var(--line);position:relative;overflow:hidden}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cb{padding:10px;display:flex;flex-direction:column;gap:3px;flex:1}
 .cb b{font-size:15px}.cb small{color:var(--mute);font-size:12px}
 .pr{color:var(--or);font-weight:800;font-size:16px;margin-top:auto;padding-top:4px}
@@ -70,24 +70,34 @@ footer{margin:30px 0 10px;color:var(--mute);font-size:13px}footer b{color:var(--
 <script>
 /* ============ DONNÉES & RÉGLAGES ============ */
 var KEY="yabiso_v3";
-var CATS=["Plats du jour","Poulet","Poisson","Viande","Accompagnements","Boissons"];
+var VER=5; // augmenter ce numéro à chaque changement de catalogue pour rafraîchir les téléphones
+var CATS=["Plats du jour","Poulet","Poisson","Viandes","Accompagnements","Boissons"];
+var DISH_CATS=["Plats du jour","Poulet","Poisson","Viandes"]; // catégories qui comptent comme "plat" pour autoriser les boissons
 var STAT=["Nouvelle commande","En attente de confirmation","Confirmée","En préparation","En livraison","Livrée","Annulée"];
 var DEF={
- settings:{shop:"YA BISO FOOD",wa:"242065314613",margin:500,transport:1000,open:"08:00",close:"17:00",cutoff:"16:30",
-  zones:"Poto-Poto, Moungali, Ouenzé, Plateau",pin:"1234"},
+ settings:{shop:"YA BISO FOOD",wa:"242065314613",margin:500,transport:1000,bump:99,open:"08:00",close:"17:00",cutoff:"16:30",
+  zones:"Makélékélé, Bacongo, Poto-Poto, Moungali, Ouenzé, Talangaï, Mfilou, Madibou, Djiri",pin:"1234"},
  products:[
-  {id:1,name:"Cuisse de poulet + bananes + riz",desc:"Cuisse de poulet, bananes et riz.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1,img:"photos/poulet-banane-riz.jpg"},
+  {id:1,name:"Cuisse de poulet + bananes + riz",desc:"Cuisse de poulet, bananes et riz.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1,img:"9cdfd3b2-bd1d-4adb-9b1d-4f431fb8ce7c.jpeg"},
   {id:2,name:"Cuisse de poulet + bananes",desc:"Cuisse de poulet avec bananes.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍌"},
   {id:3,name:"Cuisse de poulet + riz",desc:"Cuisse de poulet avec riz.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍚"},
-  {id:4,name:"Cuisse de poulet + manioc",desc:"Cuisse de poulet avec manioc.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1,img:"photos/poulet-manioc.jpg"},
-  {id:5,name:"Spaghettis + viande ou poulet",desc:"Précisez viande ou poulet dans les instructions.",partner:"Partenaire (interne)",cat:"Plats du jour",base:1500,avail:"dispo",emo:"🍝",img:"photos/spaghetti.jpg"},
+  {id:4,name:"Cuisse de poulet + manioc",desc:"Cuisse de poulet avec manioc.",partner:"Partenaire (interne)",cat:"Poulet",base:1500,avail:"dispo",emo:"🍗",pop:1,img:"90030aca-7606-4421-b56d-fe7d94b72291.jpeg"},
+  {id:5,name:"Spaghettis + viande ou poulet",desc:"Précisez viande ou poulet dans les instructions.",partner:"Partenaire (interne)",cat:"Viandes",base:1500,avail:"dispo",emo:"🍝",img:"ee7a6bdb-0837-4d75-a4e1-8a8384af99d7.jpeg"},
   {id:6,name:"Poulet mayo",desc:"Poulet sauce mayonnaise.",partner:"Partenaire (interne)",cat:"Poulet",base:2500,avail:"dispo",emo:"🍗",pop:1},
   {id:7,name:"Riz composé",desc:"Riz garni et assaisonné.",partner:"Partenaire (interne)",cat:"Plats du jour",base:2000,avail:"dispo",emo:"🍛",pop:1},
   {id:8,name:"Salade composée",desc:"Salade fraîche et variée.",partner:"Partenaire (interne)",cat:"Plats du jour",base:1500,avail:"dispo",emo:"🥗"},
-  {id:9,name:"Yaourt",desc:"Yaourt frais.",partner:"Partenaire (interne)",cat:"Boissons",base:500,avail:"dispo",emo:"🥛"}
+  {id:9,name:"Yaourt",desc:"Yaourt frais.",partner:"Partenaire (interne)",cat:"Boissons",base:500,fixed:500,avail:"dispo",emo:"🥛"},
+  {id:10,name:"Jus de bissap (500 ml)",desc:"Bouteille de 500 ml, bien frais.",partner:"Partenaire (interne)",cat:"Boissons",base:100,fixed:100,avail:"dispo",emo:"🍹"},
+  {id:11,name:"Jus de gingembre (500 ml)",desc:"Bouteille de 500 ml, bien frais.",partner:"Partenaire (interne)",cat:"Boissons",base:100,fixed:100,avail:"dispo",emo:"🥤"},
+  {id:12,name:"Bananes",desc:"Portion de bananes.",partner:"Partenaire (interne)",cat:"Accompagnements",base:500,fixed:500,avail:"dispo",emo:"🍌"},
+  {id:13,name:"Frites",desc:"Portion de frites.",partner:"Partenaire (interne)",cat:"Accompagnements",base:500,fixed:500,avail:"dispo",emo:"🍟"}
  ],orders:[],expenses:[],nid:100
 };
-var S=load()||JSON.parse(JSON.stringify(DEF));
+function clone(o){return JSON.parse(JSON.stringify(o))}
+var S=load();
+if(!S||!S.settings||!S.products){S=clone(DEF)}
+else if(S.ver!==VER){S.products=clone(DEF.products);S.settings=clone(DEF.settings)} // nouveau catalogue, on garde les commandes
+S.ver=VER;S.orders=S.orders||[];S.expenses=S.expenses||[];S.nid=S.nid||100;
 S.settings=Object.assign({},DEF.settings,S.settings);
 var cart={},cat="Tous",q="",tab="plats",authed=false;
 
@@ -103,8 +113,16 @@ function bz(){var o={};new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Brazzav
 function list(s){return s.split(",").map(function(x){return x.trim()}).filter(Boolean)}
 
 /* ============ RÈGLES MÉTIER ============ */
-// prix client = prix partenaire + marge + transport (livraison incluse). Calculé une seule fois ici.
-function price(p){return p.base+S.settings.margin+S.settings.transport}
+// Plat normal : prix partenaire + marge + transport + ajustement (+99). Calculé une seule fois ici.
+// Produit à prix fixe (boissons, accompagnements) : le prix fixe est le prix final, rien n'est ajouté.
+function isFixed(p){return p.fixed!=null&&p.fixed!==""}
+function price(p){return isFixed(p)?+p.fixed:p.base+S.settings.margin+S.settings.transport+S.settings.bump}
+function trOf(p){return isFixed(p)?0:S.settings.transport}
+// RÈGLE : une boisson ne se livre jamais seule. Si le panier contient une boisson, il faut au moins un plat.
+function isDrink(p){return p.cat==="Boissons"}
+function isDish(p){return DISH_CATS.indexOf(p.cat)>-1}
+function drinkRule(L){L=L||lines();var d=L.some(function(l){return isDrink(l.p)}),pl=L.some(function(l){return isDish(l.p)});
+ return(d&&!pl)?{ok:false,msg:"🥤 Les boissons sont livrées uniquement avec un plat. Ajoutez au moins un plat à votre panier pour pouvoir commander."}:{ok:true}}
 function svc(){var s=S.settings,t=bz();
  if(t.min<tm(s.open))return{ok:false,msg:"Nous ouvrons à "+hh(s.open)+". Vous pourrez commander dès l'ouverture."};
  if(t.min>=tm(s.cutoff)||t.min>=tm(s.close))return{ok:false,msg:"Commandes closes pour aujourd'hui (limite "+hh(s.cutoff)+"). Le service reprend demain à "+hh(s.open)+"."};
@@ -119,19 +137,20 @@ window.onhashchange=route;
 
 function match(p){return(cat==="Tous"||p.cat===cat)&&(!q||(p.name+" "+p.desc).toLowerCase().indexOf(q.toLowerCase())>-1)}
 function card(p){var ok=p.avail==="dispo",e=p.emo||"🍲",ph=p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.name)+'" data-e="'+esc(e)+'" onerror="this.replaceWith(document.createTextNode(this.dataset.e))">':e;
- return '<div class="card"><div class="ph">'+ph+'</div><div class="cb"><b>'+esc(p.name)+'</b><small>'+esc(p.desc)+'</small><div class="pr">'+F(price(p))+'</div><button class="btn b2" '+(ok?'':'disabled')+' onclick="add('+p.id+')">'+(ok?'Ajouter au panier':'Indisponible')+'</button></div></div>'}
+ return '<div class="card"><div class="ph">'+ph+'</div><div class="cb"><b>'+esc(p.name)+'</b><small>'+esc(p.desc)+'</small>'+(isDrink(p)?'<small><b>Livrée avec un plat uniquement</b></small>':'')+'<div class="pr">'+F(price(p))+'</div><button class="btn b2" '+(ok?'':'disabled')+' onclick="add('+p.id+')">'+(ok?'Ajouter au panier':'Indisponible')+'</button></div></div>'}
 function vis(){return S.products.filter(function(p){return !p.hidden})}
-function renderHome(){var s=S.settings,v=svc(),prods=vis(),flt=prods.filter(match),pops=prods.filter(function(p){return p.pop});
+function renderHome(){var s=S.settings,v=svc(),prods=vis(),flt=prods.filter(match),pops=prods.filter(function(p){return p.pop}),
+ cl=CATS.filter(function(c){return prods.some(function(p){return p.cat===c})});
  $("app").innerHTML='<header class="top"><div class="w"><div class="logo">🍲 '+esc(s.shop)+'</div><button class="ib" onclick="document.getElementById(\'cats\').scrollIntoView()">Catégories</button><button class="ib" onclick="openCart()">🛒 '+cnt()+'</button></div></header>'+
  '<div id="st" class="'+(v.ok?'ok':'ko')+'">'+(v.ok?'🟢 Ouvert · commandes jusqu\'à '+hh(s.cutoff)+' · service '+hh(s.open)+'–'+hh(s.close):'🔴 '+esc(v.msg))+'</div>'+
  '<section class="hero"><div class="w"><h1>Vos plats préférés, livrés chez vous à Brazzaville</h1><p>Plats préparés par nos cuisiniers partenaires. Livraison incluse, de '+hh(s.open)+' à '+hh(s.close)+'.</p><a class="btn b1" href="#plats" onclick="document.getElementById(\'plats\').scrollIntoView();return false">Découvrir les plats</a></div></section>'+
  '<main class="w"><div class="search"><input type="search" placeholder="🔍 Rechercher un plat…" value="'+esc(q)+'" oninput="q=this.value;list2()"></div>'+
- '<div class="chips" id="cats">'+["Tous"].concat(CATS).map(function(c){return '<button class="chip'+(c===cat?' on':'')+'" onclick="cat=\''+c+'\';renderHome()">'+c+'</button>'}).join("")+'</div>'+
+ '<div class="chips" id="cats">'+["Tous"].concat(cl).map(function(c){return '<button class="chip'+(c===cat?' on':'')+'" onclick="cat=\''+c+'\';renderHome()">'+c+'</button>'}).join("")+'</div>'+
  (cat==="Tous"&&!q&&pops.length?'<h2>Les plats populaires</h2><div class="grid">'+pops.map(card).join("")+'</div>':'')+
  '<h2 id="plats">'+(cat==="Tous"?'Tous nos plats':cat)+'</h2><div class="grid" id="lst">'+(flt.map(card).join("")||'<p>Aucun plat trouvé.</p>')+'</div>'+
- '<div class="promo"><b>🛵 Livraison incluse</b><br>Le prix affiché est le prix à payer : aucun frais de livraison en plus.<small>Livraison dans les quartiers desservis : '+esc(s.zones)+'. Votre adresse est vérifiée avant confirmation.</small></div>'+
+ '<div class="promo"><b>🛵 Livraison incluse</b><br>Le prix affiché est le prix à payer : aucun frais de livraison en plus.<small>Nous livrons dans tout Brazzaville, sous réserve de confirmation de votre adresse par WhatsApp. Les boissons sont livrées uniquement avec un plat.</small></div>'+
  '<h2>Commander en 3 étapes</h2><div class="steps"><div>1️⃣ Choisissez vos plats et ajoutez-les au panier.</div><div>2️⃣ Renseignez votre adresse à Brazzaville et envoyez la commande sur WhatsApp.</div><div>3️⃣ Nous confirmons, puis vous payez <b>en espèces à la livraison</b>.</div></div>'+
- '<footer><p><b>Contact :</b> WhatsApp +'+esc(s.wa)+'<br><b>Horaires :</b> '+hh(s.open)+' – '+hh(s.close)+' (dernière commande '+hh(s.cutoff)+')<br><b>Livraison :</b> à pied, incluse dans le prix, dans les quartiers desservis.</p><p><b>Paiement :</b> espèces à la livraison uniquement.<br><b>Annulation / remboursement :</b> une commande peut être annulée gratuitement avant le début de la préparation. Un plat non conforme ou non livré n\'est pas facturé.<br><b>Confidentialité :</b> vos nom, téléphone et adresse servent uniquement à traiter votre commande.</p><p>'+esc(s.shop)+' est une plateforme d\'intermédiation : les plats sont préparés par nos cuisiniers et restaurants partenaires.</p></footer></main>'}
+ '<footer><p><b>Contact :</b> WhatsApp +'+esc(s.wa)+'<br><b>Horaires :</b> '+hh(s.open)+' – '+hh(s.close)+' (dernière commande '+hh(s.cutoff)+')<br><b>Livraison :</b> nous livrons dans tout Brazzaville, sous réserve de confirmation de votre adresse par WhatsApp. Livraison incluse dans le prix. Les boissons sont livrées uniquement avec un plat.</p><p><b>Paiement :</b> espèces à la livraison uniquement.<br><b>Annulation / remboursement :</b> une commande peut être annulée gratuitement avant le début de la préparation. Un plat non conforme ou non livré n\'est pas facturé.<br><b>Confidentialité :</b> vos nom, téléphone et adresse servent uniquement à traiter votre commande.</p><p>'+esc(s.shop)+' est une plateforme d\'intermédiation : les plats sont préparés par nos cuisiniers et restaurants partenaires.</p></footer></main>'}
 function list2(){var f=vis().filter(match);$("lst").innerHTML=f.map(card).join("")||"<p>Aucun plat trouvé.</p>"}
 function add(id){var p=S.products.filter(function(x){return x.id===id})[0];if(!p||p.avail!=="dispo")return;cart[id]=(cart[id]||0)+1;toast("Ajouté : "+p.name);bar()}
 function bar(){var c=cnt(),b=$("bar");if(location.hash==="#admin"||!c){b.style.display="none";return}b.style.display="block";$("barb").textContent="🛒 Voir mon panier ("+c+") · "+F(sub())}
@@ -142,33 +161,37 @@ function hide(){$("ov").style.display="none"}
 var form={name:"",phone:"",addr:"",zone:"",note:""};
 function openCart(){var L=lines();
  if(!L.length){show('<h2 style="margin-top:0">Mon panier</h2><p>Votre panier est vide.</p>');return}
- var zs=list(S.settings.zones);
+ var zs=list(S.settings.zones),R=drinkRule(L);
  show('<h2 style="margin-top:0">Mon panier</h2>'+L.map(function(l){return '<div class="ln"><div class="n"><b>'+esc(l.p.name)+'</b><small>'+F(price(l.p))+'</small></div><div class="q"><button onclick="ch('+l.p.id+',-1)">−</button><b>'+l.q+'</b><button onclick="ch('+l.p.id+',1)">+</button></div><button class="btn b4 sm" onclick="rm('+l.p.id+')">🗑</button></div>'}).join("")+
+ '<div class="al" id="rule" style="display:'+(R.ok?'none':'block')+'">'+(R.ok?'':esc(R.msg))+'</div>'+
  '<label>Nom</label><input id="f_n" value="'+esc(form.name)+'" autocomplete="name">'+
  '<label>Téléphone</label><input id="f_p" type="tel" value="'+esc(form.phone)+'" autocomplete="tel">'+
- '<label>Quartier</label><select id="f_z"><option value="">Choisir…</option>'+zs.map(function(z){return '<option'+(form.zone===z?' selected':'')+'>'+esc(z)+'</option>'}).join("")+'<option value="__autre"'+(form.zone==="__autre"?' selected':'')+'>Autre quartier (à vérifier)</option></select>'+
+ '<label>Votre arrondissement</label><select id="f_z"><option value="">Choisir…</option>'+zs.map(function(z){return '<option'+(form.zone===z?' selected':'')+'>'+esc(z)+'</option>'}).join("")+'<option value="__autre"'+(form.zone==="__autre"?' selected':'')+'>Autre / je ne sais pas</option></select>'+
  '<label>Adresse ou repère précis à Brazzaville</label><textarea id="f_a" rows="2">'+esc(form.addr)+'</textarea>'+
  '<label>Instructions (facultatif)</label><input id="f_o" value="'+esc(form.note)+'">'+
- '<div style="margin-top:14px"><div class="rw"><span>Sous-total plats</span><span>'+F(sub())+'</span></div><div class="rw"><span>Livraison</span><span><b>Incluse</b></span></div><div class="rw tt"><span>Total à payer</span><span>'+F(sub())+'</span></div></div><p class="note">💵 Paiement : espèces à la livraison.</p><div class="al" id="al" style="display:none"></div>'+
- '<button class="btn b2 bw" style="margin-top:12px" onclick="recap()">Vérifier ma commande</button>')}
+ '<div style="margin-top:14px"><div class="rw"><span>Sous-total plats</span><span>'+F(sub())+'</span></div><div class="rw"><span>Livraison</span><span><b>Incluse</b></span></div><div class="rw tt"><span>Total à payer</span><span>'+F(sub())+'</span></div></div><p class="note">💵 Paiement : espèces à la livraison. 📍 Livraison confirmée par WhatsApp selon votre adresse.</p><div class="al" id="al" style="display:none"></div>'+
+ '<button class="btn b2 bw" style="margin-top:12px'+(R.ok?'':';opacity:.45')+'" '+(R.ok?'':'disabled ')+'onclick="recap()">Vérifier ma commande</button>')}
 function rd(){form.name=$("f_n").value;form.phone=$("f_p").value;form.zone=$("f_z").value;form.addr=$("f_a").value;form.note=$("f_o").value}
 function recap(){rd();var e=[],ph=form.phone.replace(/\D/g,"");
  if(form.name.trim().length<2)e.push("Indiquez votre nom.");
  if(ph.length<8||ph.length>15)e.push("Numéro de téléphone invalide.");
  if(!form.zone)e.push("Choisissez votre quartier.");
  if(form.addr.trim().length<5)e.push("Indiquez une adresse ou un repère précis.");
+ var R=drinkRule();if(!R.ok)e.push(R.msg);
  var v=svc();if(!v.ok)e.push(v.msg);
  var a=$("al");if(e.length){a.style.display="block";a.innerHTML=e.map(esc).join("<br>");return}
  var o=mk();
  show('<h2 style="margin-top:0">Récapitulatif</h2>'+o.items.map(function(i){return '<div class="rw"><span>'+i.qty+' × '+esc(i.name)+'</span><span>'+F(i.price*i.qty)+'</span></div>'}).join("")+
  '<div class="rw"><span>Livraison</span><span>Incluse</span></div><div class="rw tt"><span>Total</span><span>'+F(o.total)+'</span></div>'+
  '<p class="note">👤 '+esc(o.name)+' · 📞 '+esc(o.phone)+'<br>📍 '+esc(o.zone==="__autre"?"Autre quartier":o.zone)+' – '+esc(o.addr)+'<br>💵 Espèces à la livraison</p>'+
- (o.zone==="__autre"?'<div class="al" style="display:block">Ce quartier sera vérifié : la livraison n\'est pas garantie.</div>':'')+
+ '<p class="note">📍 La livraison à votre adresse est confirmée par WhatsApp avant la préparation.'+(o.zone==="__autre"?' Pensez à préciser votre arrondissement dans le message.':'')+'</p>'+
  '<button class="btn b2 bw" style="margin-top:12px" onclick="confirmOrder()">Confirmer et préparer l\'envoi WhatsApp</button><button class="btn b4 bw" style="margin-top:8px" onclick="openCart()">Modifier</button>')}
-function mk(){var t=S.settings.transport,items=lines().map(function(l){return{id:l.p.id,name:l.p.name,partner:l.p.partner,base:l.p.base,tr:t,price:price(l.p),qty:l.q}}); // prix recalculés depuis le catalogue, jamais depuis l'écran
+function mk(){var items=lines().map(function(l){return{id:l.p.id,name:l.p.name,partner:l.p.partner,base:l.p.base,tr:trOf(l.p),price:price(l.p),qty:l.q}}); // prix recalculés depuis le catalogue, jamais depuis l'écran
  var sb=items.reduce(function(s,i){return s+i.price*i.qty},0);
  return{items:items,sub:sb,fee:0,total:sb,name:form.name.trim(),phone:form.phone.trim(),addr:form.addr.trim(),zone:form.zone,note:form.note.trim()}}
-function confirmOrder(){var o=mk();S.nid++;o.no="YB-"+bz().date.replace(/-/g,"").slice(2)+"-"+S.nid;o.date=bz().date;o.status="Nouvelle commande";o.src="site";S.orders.push(o);save();
+function confirmOrder(){var R=drinkRule(),v=svc();if(!lines().length){hide();return}
+ if(!R.ok||!v.ok){openCart();if(R.ok){var a=$("al");if(a){a.style.display="block";a.textContent=v.msg}}return}
+ var o=mk();S.nid++;o.no="YB-"+bz().date.replace(/-/g,"").slice(2)+"-"+S.nid;o.date=bz().date;o.status="Nouvelle commande";o.src="site";S.orders.push(o);save();
  var m="🍲 *Commande "+o.no+"*\n\n"+o.items.map(function(i){return "• "+i.qty+" × "+i.name+" – "+F(i.price*i.qty)}).join("\n")+"\n\nLivraison : incluse\n*TOTAL À PAYER : "+F(o.total)+"*\n\n👤 "+o.name+"\n📞 "+o.phone+"\n📍 "+(o.zone==="__autre"?"Autre quartier":o.zone)+" – "+o.addr+(o.note?"\n📝 "+o.note:"")+"\n💵 Paiement : espèces à la livraison";
  cart={};form={name:"",phone:"",addr:"",zone:"",note:""};bar();
  show('<h2 style="margin-top:0">Dernière étape ✋</h2><p>Votre commande <b>'+o.no+'</b> est prête mais <b>pas encore envoyée</b>. Appuyez sur le bouton ci-dessous, puis sur « Envoyer » dans WhatsApp.</p><a class="btn b2 bw" style="background:#25d366" target="_blank" rel="noopener" href="https://wa.me/'+S.settings.wa+'?text='+encodeURIComponent(m)+'">Ouvrir WhatsApp et envoyer</a><p class="note">⚠️ Ouvrir WhatsApp n\'enregistre pas la commande : elle n\'est <b>confirmée</b> que lorsque la boutique vous répond.</p><button class="btn b4 bw" onclick="hide();renderHome()">Fermer</button>')}
@@ -180,16 +203,16 @@ function renderAdmin(){hide();
  $("app").innerHTML='<header class="top"><div class="w"><div class="logo">⚙️ Admin</div><a class="ib" href="#" style="text-decoration:none">Voir le site</a></div></header><div class="w"><div class="al" style="display:block;margin-top:12px">Les données (plats, commandes) sont enregistrées <b>uniquement sur cet appareil</b>. Les plats et prix que voient vos clients sont ceux écrits dans le code sur GitHub.</div><div class="tabs">'+T.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="tab=\''+t[0]+'\';renderAdmin()">'+t[1]+'</button>'}).join("")+'</div><div id="tb"></div></div>';
  ({plats:tPlats,cmd:tCmd,ventes:tVentes,reg:tReg,sauv:tSauv})[tab]()}
 function login(){if($("pin").value===S.settings.pin){authed=true;renderAdmin()}else toast("Code incorrect")}
-function tPlats(){$("tb").innerHTML='<button class="btn b2 bw" onclick="editP(0)">+ Ajouter un plat</button><div style="margin-top:10px">'+S.products.map(function(p){return '<div class="adm"><b>'+esc(p.name)+'</b>'+(p.hidden?' <small>(masqué)</small>':'')+'<br><small>'+esc(p.partner)+' · '+p.cat+'<br>Base partenaire : '+F(p.base)+' + marge '+F(S.settings.margin)+' + transport '+F(S.settings.transport)+' → <b>Prix client : '+F(price(p))+'</b></small><div class="row2" style="margin-top:8px"><button class="btn b4 sm" onclick="editP('+p.id+')">Modifier</button><button class="btn b4 sm" onclick="tgl('+p.id+',\'avail\')">'+(p.avail==="dispo"?'Mettre en rupture':'Remettre dispo')+'</button><button class="btn b4 sm" onclick="tgl('+p.id+',\'hidden\')">'+(p.hidden?'Afficher':'Masquer')+'</button><button class="btn b4 sm" onclick="delP('+p.id+')">Supprimer</button></div></div>'}).join("")+'</div>'}
+function tPlats(){var s=S.settings;$("tb").innerHTML='<button class="btn b2 bw" onclick="editP(0)">+ Ajouter un plat</button><div style="margin-top:10px">'+S.products.map(function(p){return '<div class="adm"><b>'+esc(p.name)+'</b>'+(p.hidden?' <small>(masqué)</small>':'')+'<br><small>'+esc(p.partner)+' · '+p.cat+'<br>'+(isFixed(p)?'Prix fixe client : <b>'+F(p.fixed)+'</b> · achat partenaire '+F(p.base)+' · marge '+F(p.fixed-p.base):'Base partenaire : '+F(p.base)+' + marge '+F(s.margin)+' + transport '+F(s.transport)+' + ajustement '+F(s.bump)+' → <b>Prix client : '+F(price(p))+'</b>')+'</small><div class="row2" style="margin-top:8px"><button class="btn b4 sm" onclick="editP('+p.id+')">Modifier</button><button class="btn b4 sm" onclick="tgl('+p.id+',\'avail\')">'+(p.avail==="dispo"?'Mettre en rupture':'Remettre dispo')+'</button><button class="btn b4 sm" onclick="tgl('+p.id+',\'hidden\')">'+(p.hidden?'Afficher':'Masquer')+'</button><button class="btn b4 sm" onclick="delP('+p.id+')">Supprimer</button></div></div>'}).join("")+'</div>'}
 function tgl(id,k){var p=S.products.filter(function(x){return x.id===id})[0];if(k==="avail")p.avail=p.avail==="dispo"?"rupture":"dispo";else p.hidden=!p.hidden;save();renderAdmin()}
 function delP(id){if(confirm("Supprimer ce plat ?")){S.products=S.products.filter(function(x){return x.id!==id});save();renderAdmin()}}
 var tmpImg=null;
 function editP(id){var p=S.products.filter(function(x){return x.id===id})[0]||{id:0,name:"",desc:"",partner:"",cat:"Plats du jour",base:0,avail:"dispo",emo:"🍲"};tmpImg=p.img||null;
- show('<h2 style="margin-top:0">'+(id?'Modifier':'Nouveau')+' plat</h2><label>Nom</label><input id="e_n" value="'+esc(p.name)+'"><label>Description courte</label><input id="e_d" value="'+esc(p.desc)+'"><label>Partenaire (interne, non affiché aux clients)</label><input id="e_p" value="'+esc(p.partner)+'"><label>Catégorie</label><select id="e_c">'+CATS.map(function(c){return '<option'+(c===p.cat?' selected':'')+'>'+c+'</option>'}).join("")+'</select><label>Prix de base partenaire (FCFA)</label><input id="e_b" type="number" inputmode="numeric" value="'+p.base+'" oninput="pv()"><p class="note">Prix affiché au client : <b id="e_pv"></b></p><label>Emoji (si pas de photo)</label><input id="e_e" value="'+esc(p.emo||"🍲")+'"><label>Photo (depuis votre iPhone)</label><input id="e_i" type="file" accept="image/*" onchange="pic(this)"><button class="btn b2 bw" style="margin-top:12px" onclick="saveP('+id+')">Enregistrer</button>');pv()}
-function pv(){var b=+$("e_b").value||0;$("e_pv").textContent=F(b+S.settings.margin+S.settings.transport)}
+ show('<h2 style="margin-top:0">'+(id?'Modifier':'Nouveau')+' plat</h2><label>Nom</label><input id="e_n" value="'+esc(p.name)+'"><label>Description courte</label><input id="e_d" value="'+esc(p.desc)+'"><label>Partenaire (interne, non affiché aux clients)</label><input id="e_p" value="'+esc(p.partner)+'"><label>Catégorie</label><select id="e_c">'+CATS.map(function(c){return '<option'+(c===p.cat?' selected':'')+'>'+c+'</option>'}).join("")+'</select><label>Prix de base partenaire (FCFA)</label><input id="e_b" type="number" inputmode="numeric" value="'+p.base+'" oninput="pv()"><label>Prix fixe client (facultatif, remplace le calcul automatique)</label><input id="e_f" type="number" inputmode="numeric" value="'+(isFixed(p)?p.fixed:"")+'" oninput="pv()"><p class="note">Prix affiché au client : <b id="e_pv"></b></p><label>Emoji (si pas de photo)</label><input id="e_e" value="'+esc(p.emo||"🍲")+'"><label>Photo (depuis votre iPhone)</label><input id="e_i" type="file" accept="image/*" onchange="pic(this)"><button class="btn b2 bw" style="margin-top:12px" onclick="saveP('+id+')">Enregistrer</button>');pv()}
+function pv(){var f=$("e_f").value.trim(),b=+$("e_b").value||0,s=S.settings;$("e_pv").textContent=F(f!==""?(+f||0):b+s.margin+s.transport+s.bump)}
 function pic(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),k=Math.min(1,480/im.width);c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);tmpImg=c.toDataURL("image/jpeg",.7);toast("Photo prête")};im.src=r.result};r.readAsDataURL(f)}
-function saveP(id){var n=$("e_n").value.trim(),b=Math.max(0,parseInt($("e_b").value,10)||0);if(!n||!b){toast("Nom et prix de base requis");return}
- var o={name:n,desc:$("e_d").value.trim(),partner:$("e_p").value.trim()||"Partenaire (interne)",cat:$("e_c").value,base:b,emo:$("e_e").value||"🍲",img:tmpImg};
+function saveP(id){var n=$("e_n").value.trim(),b=Math.max(0,parseInt($("e_b").value,10)||0),f=$("e_f").value.trim();if(!n||!b){toast("Nom et prix de base requis");return}
+ var o={name:n,desc:$("e_d").value.trim(),partner:$("e_p").value.trim()||"Partenaire (interne)",cat:$("e_c").value,base:b,fixed:f===""?null:Math.max(0,parseInt(f,10)||0),emo:$("e_e").value||"🍲",img:tmpImg};
  if(id){var p=S.products.filter(function(x){return x.id===id})[0];Object.assign(p,o)}else{S.nid++;o.id=S.nid;o.avail="dispo";S.products.push(o)}
  save();hide();renderAdmin()}
 function tCmd(){var h='<button class="btn b2 bw" onclick="manual()">+ Enregistrer une commande reçue sur WhatsApp</button><div style="margin-top:10px">';
@@ -197,26 +220,26 @@ function tCmd(){var h='<button class="btn b2 bw" onclick="manual()">+ Enregistre
  $("tb").innerHTML=h+'</div>'}
 function setS(no,s){S.orders.filter(function(o){return o.no===no})[0].status=s;save()}
 function manual(){show('<h2 style="margin-top:0">Commande reçue sur WhatsApp</h2><label>Nom client</label><input id="m_n"><label>Téléphone</label><input id="m_p" type="tel"><label>Quartier</label><select id="m_z">'+list(S.settings.zones).map(function(z){return '<option>'+esc(z)+'</option>'}).join("")+'</select><label>Plats</label>'+S.products.map(function(p){return '<div class="ln"><div class="n">'+esc(p.name)+'<small>'+F(price(p))+'</small></div><input type="number" min="0" value="0" style="width:70px" data-pid="'+p.id+'"></div>'}).join("")+'<button class="btn b2 bw" style="margin-top:12px" onclick="saveM()">Enregistrer</button>')}
-function saveM(){var it=[],t=S.settings.transport;[].forEach.call(document.querySelectorAll("[data-pid]"),function(i){var n=parseInt(i.value,10)||0,p=S.products.filter(function(x){return x.id==i.dataset.pid})[0];if(n>0&&p)it.push({id:p.id,name:p.name,partner:p.partner,base:p.base,tr:t,price:price(p),qty:n})});
+function saveM(){var it=[];[].forEach.call(document.querySelectorAll("[data-pid]"),function(i){var n=parseInt(i.value,10)||0,p=S.products.filter(function(x){return x.id==i.dataset.pid})[0];if(n>0&&p)it.push({id:p.id,name:p.name,partner:p.partner,base:p.base,tr:trOf(p),price:price(p),qty:n})});
  if(!it.length||!$("m_n").value.trim()){toast("Nom et au moins un plat");return}
+ var R=drinkRule(it.map(function(i){return{p:S.products.filter(function(x){return x.id===i.id})[0]}}));if(!R.ok){toast("Boissons seules : commande non livrable");return}
  var sb=it.reduce(function(s,i){return s+i.price*i.qty},0);S.nid++;
  S.orders.push({no:"YB-"+bz().date.replace(/-/g,"").slice(2)+"-"+S.nid,date:bz().date,items:it,sub:sb,fee:0,total:sb,name:$("m_n").value.trim(),phone:$("m_p").value.trim(),addr:"(voir WhatsApp)",zone:$("m_z").value,status:"Confirmée",src:"manuel"});save();hide();renderAdmin()}
 function tVentes(){var d=S.orders.filter(function(o){return o.status==="Livrée"}),rev=0,mg=0,tr=0;
  d.forEach(function(o){o.items.forEach(function(i){var t=i.tr||0;rev+=i.price*i.qty;mg+=(i.price-i.base-t)*i.qty;tr+=t*i.qty})});
  var ex=S.expenses.reduce(function(s,e){return s+e.amt},0),cnts={};STAT.forEach(function(s){cnts[s]=S.orders.filter(function(o){return o.status===s}).length});
- $("tb").innerHTML='<div class="adm"><b>Commandes livrées : '+d.length+'</b><div class="rw"><span>Total encaissé</span><span>'+F(rev)+'</span></div><div class="rw"><span>Marge brute (ta marge par plat)</span><span>'+F(mg)+'</span></div><div class="rw"><span>Transport inclus dans les prix</span><span>'+F(tr)+'</span></div><div class="rw"><span>Dépenses saisies</span><span>− '+F(ex)+'</span></div><div class="rw tt"><span>Résultat estimé</span><span>'+F(mg+tr-ex)+'</span></div><small>Résultat = marge + transport encaissé − dépenses (déplacements, emballages…). Basé uniquement sur les commandes « Livrée » enregistrées ici.</small></div>'+
+ $("tb").innerHTML='<div class="adm"><b>Commandes livrées : '+d.length+'</b><div class="rw"><span>Total encaissé</span><span>'+F(rev)+'</span></div><div class="rw"><span>Marge brute (marge + ajustement)</span><span>'+F(mg)+'</span></div><div class="rw"><span>Transport inclus dans les prix</span><span>'+F(tr)+'</span></div><div class="rw"><span>Dépenses saisies</span><span>− '+F(ex)+'</span></div><div class="rw tt"><span>Résultat estimé</span><span>'+F(mg+tr-ex)+'</span></div><small>Résultat = marge + transport encaissé − dépenses (déplacements, emballages…). Basé uniquement sur les commandes « Livrée » enregistrées ici.</small></div>'+
  '<div class="adm"><b>Statuts</b>'+STAT.map(function(s){return '<div class="rw"><span>'+s+'</span><span>'+cnts[s]+'</span></div>'}).join("")+'</div>'+
  '<div class="adm"><b>Ajouter une dépense</b><input id="x_l" placeholder="Ex : emballages"><input id="x_a" type="number" placeholder="Montant FCFA" style="margin-top:6px"><button class="btn b3 bw sm" style="margin-top:8px" onclick="addX()">Ajouter</button>'+S.expenses.map(function(e,i){return '<div class="rw"><span>'+esc(e.label)+'</span><span>'+F(e.amt)+' <a href="#admin" onclick="S.expenses.splice('+i+',1);save();renderAdmin();return false">✕</a></span></div>'}).join("")+'</div>'}
 function addX(){var a=parseInt($("x_a").value,10)||0;if(a<=0)return;S.expenses.push({label:$("x_l").value.trim()||"Dépense",amt:a});save();renderAdmin()}
 function tReg(){var s=S.settings;$("tb").innerHTML='<div class="adm">'+
- [["shop","Nom de la boutique"],["wa","Numéro WhatsApp (indicatif sans +)"],["margin","Ta marge par plat (FCFA)","number"],["transport","Transport inclus par plat (FCFA)","number"],["open","Ouverture","time"],["close","Fermeture","time"],["cutoff","Heure limite de commande","time"],["zones","Quartiers desservis (séparés par des virgules)"],["pin","Code PIN admin"]].map(function(f){return '<label>'+f[1]+'</label><input id="r_'+f[0]+'" type="'+(f[2]||"text")+'" value="'+esc(s[f[0]])+'">'}).join("")+
+ [["shop","Nom de la boutique"],["wa","Numéro WhatsApp (indicatif sans +)"],["margin","Ta marge par plat (FCFA)","number"],["transport","Transport inclus par plat (FCFA)","number"],["bump","Ajustement de prix par plat (FCFA)","number"],["open","Ouverture","time"],["close","Fermeture","time"],["cutoff","Heure limite de commande","time"],["zones","Arrondissements proposés aux clients (séparés par des virgules)"],["pin","Code PIN admin"]].map(function(f){return '<label>'+f[1]+'</label><input id="r_'+f[0]+'" type="'+(f[2]||"text")+'" value="'+esc(s[f[0]])+'">'}).join("")+
  '<button class="btn b2 bw" style="margin-top:12px" onclick="saveR()">Enregistrer les réglages</button></div>'}
 function saveR(){var s=S.settings;["shop","wa","open","close","cutoff","zones","pin"].forEach(function(k){var v=$("r_"+k).value.trim();if(v)s[k]=v});s.wa=s.wa.replace(/\D/g,"");
- ["margin","transport"].forEach(function(k){var v=parseInt($("r_"+k).value,10);if(v>=0)s[k]=v});save();toast("Réglages enregistrés")}
+ ["margin","transport","bump"].forEach(function(k){var v=parseInt($("r_"+k).value,10);if(v>=0)s[k]=v});save();toast("Réglages enregistrés")}
 function tSauv(){$("tb").innerHTML='<div class="adm"><b>Sauvegarde</b><p class="note">Copiez ce texte et collez-le dans l\'app Notes de votre iPhone. Pour restaurer, collez-le dans la case puis appuyez sur Restaurer.</p><textarea id="bk" rows="7">'+esc(JSON.stringify(S))+'</textarea><button class="btn b3 bw sm" style="margin-top:8px" onclick="restore()">Restaurer depuis ce texte</button><button class="btn b4 bw sm" style="margin-top:8px" onclick="if(confirm(\'Tout effacer et revenir aux données du code ?\')){localStorage.removeItem(KEY);location.reload()}">Réinitialiser</button></div>'}
 function restore(){try{var d=JSON.parse($("bk").value);if(!d.settings||!d.products)throw 0;S=d;save();toast("Restauré");renderAdmin()}catch(e){toast("Texte de sauvegarde invalide")}}
-var PH={1:"9cdfd3b2-bd1d-4adb-9b1d-4f431fb8ce7c.jpeg",4:"90030aca-7606-4421-b56d-fe7d94b72291.jpeg",5:"ee7a6bdb-0837-4d75-a4e1-8a8384af99d7.jpeg"};S.products.forEach(function(p){if(PH[p.id])p.img=PH[p.id]});route();//
-github.com/chadrackbayidikila/yabisofood/edit/main/index.htmlroute();
+route();
 </script>
 </body>
 </html>
