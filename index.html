@@ -239,7 +239,7 @@ function saveR(){var s=S.settings;["shop","wa","open","close","cutoff","zones","
  ["margin","transport","bump"].forEach(function(k){var v=parseInt($("r_"+k).value,10);if(v>=0)s[k]=v});save();toast("Réglages enregistrés")}
 function tSauv(){$("tb").innerHTML='<div class="adm"><b>Sauvegarde</b><p class="note">Copiez ce texte et collez-le dans l\'app Notes de votre iPhone. Pour restaurer, collez-le dans la case puis appuyez sur Restaurer.</p><textarea id="bk" rows="7">'+esc(JSON.stringify(S))+'</textarea><button class="btn b3 bw sm" style="margin-top:8px" onclick="restore()">Restaurer depuis ce texte</button><button class="btn b4 bw sm" style="margin-top:8px" onclick="if(confirm(\'Tout effacer et revenir aux données du code ?\')){localStorage.removeItem(KEY);location.reload()}">Réinitialiser</button></div>'}
 function restore(){try{var d=JSON.parse($("bk").value);if(!d.settings||!d.products)throw 0;S=d;save();toast("Restauré");renderAdmin()}catch(e){toast("Texte de sauvegarde invalide")}}
-route();
+var PH={1:"9cdfd3b2-bd1d-4adb-9b1d-4f431fb8ce7c.jpeg",2:"fa45cd64-c63a-4cc2-a915-9e221e416c7b.jpeg",3:"IMG_0324.jpeg",4:"90030aca-7606-4421-b56d-fe7d94b72291.jpeg",5:"ee7a6bdb-0837-4d75-a4e1-8a8384af99d7.jpeg",6:"5d469889-7ed0-44ee-a167-e137da20bc10.jpeg",7:"19cadf6c-3090-48fe-a0cf-99663fd7ade4.jpeg",8:"IMG_0308.jpeg",9:"IMG_0323.jpeg",11:"C6E0095B-3830-4DEB-BAED-BDF41390B206.jpeg",12:"IMG_0307.jpeg",13:"IMG_0229.jpeg"};S.products.forEach(function(p){if(PH[p.id])p.img=PH[p.id]});route();
 </script>
 </body>
 </html>
